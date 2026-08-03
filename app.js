@@ -5,12 +5,12 @@ import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot
 
 // --- FIREBASE CONFIGURATION ---
 const firebaseConfig = {
-    aapiKey: "AIzaSyDnpdUqMgnJ-zh6EilskMiBelMmjFCync4",
-    authDomain: "studio-7570426484-a07s3.firebaseapp.com",
-    projectId: "studio-7570426484-a07s3",
-    storageBucket: "studio-7570426484-a07s3.firebasestorage.app",
-    messagingSenderId: "380889309790",
-    appId: "1:380889309790:web:b67a54de9a81d6d2aecacf"
+      apiKey: "AIzaSyDnpdUqMgnJ-zh6EilskMiBelMmjFCync4",
+  authDomain: "studio-7570426484-a07s3.firebaseapp.com",
+  projectId: "studio-7570426484-a07s3",
+  storageBucket: "studio-7570426484-a07s3.firebasestorage.app",
+  messagingSenderId: "380889309790",
+  appId: "1:380889309790:web:b67a54de9a81d6d2aecacf"
 };
 
 // Initialize Firebase
