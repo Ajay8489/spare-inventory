@@ -1,17 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-// Added query, where, and getDocs to handle the scanner database lookup
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // --- FIREBASE CONFIGURATION ---
-const firebaseConfig = { 
-    apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
-    authDomain: "experiment-51058.firebaseapp.com",
-    projectId: "experiment-51058",
-    storageBucket: "experiment-51058.firebasestorage.app",
-    messagingSenderId: "523094266784",
-    appId: "1:523094266784:web:e370716bfbd4a27555cac5",
-    measurementId: "G-SHLW7HC5E4"
+const firebaseConfig = {
+    apiKey: "AIzaSyDRZgMvYRjpuFlsTyoLTZK_mNuvA7jg4HE",
+    authDomain: "obscura-9bb1a.firebaseapp.com",
+    projectId: "obscura-9bb1a",
+    storageBucket: "obscura-9bb1a.firebasestorage.app",
+    messagingSenderId: "1081657320125",
+    appId: "1:1081657320125:web:d97ca25751b1de71948dd4"
 };
 
 // Initialize Firebase
@@ -24,7 +22,7 @@ const spareForm = document.getElementById('spareForm');
 const formTitle = document.getElementById('formTitle');
 const spareNameInput = document.getElementById('spareName');
 const spareQtyInput = document.getElementById('spareQty');
-const spareUsedInput = document.getElementById('spareUsed'); // NEW: Added Used Input
+const spareUsedInput = document.getElementById('spareUsed');
 const spareBarcodeInput = document.getElementById('spareBarcode');
 const barcodePreview = document.getElementById('barcodePreview');
 const editIdInput = document.getElementById('editId');
@@ -37,6 +35,16 @@ const totalUniqueEl = document.getElementById('totalUnique');
 const totalQtyEl = document.getElementById('totalQty');
 const generateBarcodeBtn = document.getElementById('generateBarcodeBtn');
 const printBarcodeBtn = document.getElementById('printBarcodeBtn');
+
+// --- USAGE TRACKER DOM ELEMENTS ---
+const startDateInput = document.getElementById('startDate');
+const endDateInput = document.getElementById('endDate');
+const checkUsageBtn = document.getElementById('checkUsageBtn');
+const usageResults = document.getElementById('usageResults');
+const usageList = document.getElementById('usageList');
+
+// --- CACHED INVENTORY DATA FOR USAGE FILTERING ---
+let currentInventoryData = [];
 
 // --- AUTHENTICATION & INITIALIZATION ---
 onAuthStateChanged(auth, (user) => {
@@ -51,6 +59,13 @@ onAuthStateChanged(auth, (user) => {
 
 // Load inventory immediately
 initInventoryListener();
+
+// Set default dates for usage tracker on load
+document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    if (endDateInput) endDateInput.value = today;
+    if (startDateInput) startDateInput.value = today;
+});
 
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
@@ -70,11 +85,11 @@ function initInventoryListener() {
     onSnapshot(q, (snapshot) => {
         let totalUnique = snapshot.size;
         let totalQty = 0;
+        currentInventoryData = []; // Reset cache array
 
         if (inventoryTableBody) {
             inventoryTableBody.innerHTML = "";
             if (totalUnique === 0) {
-                // Changed colspan to 5 for the new column
                 inventoryTableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No spares found in inventory.</td></tr>`;
             }
         }
@@ -85,14 +100,24 @@ function initInventoryListener() {
             const rawName = data.name || "";
             const rawBarcode = data.barcode || "";
             const qty = Number(data.quantity) || 0;
-            const used = Number(data.used) || 0; // NEW: Get used value from Firestore
+            // Safely handle records that don't have the 'used' field yet
+            const used = (data.used !== undefined && data.used !== null) ? Number(data.used) : 0;
             
+            // Push into local cache for date range filtering
+            currentInventoryData.push({
+                id,
+                name: rawName,
+                quantity: qty,
+                used: used,
+                barcode: rawBarcode,
+                updatedAt: data.updatedAt || data.createdAt
+            });
+
             totalQty += qty;
 
             const row = document.createElement('tr');
             row.className = "hover:bg-gray-50 transition-colors";
             
-            // NEW: Added the used column data
             row.innerHTML = `
                 <td class="p-4 font-medium text-gray-800">${escapeHtml(rawName)}</td>
                 <td class="p-4 font-mono text-gray-600">${escapeHtml(rawBarcode)}</td>
@@ -107,7 +132,7 @@ function initInventoryListener() {
             const editBtn = row.querySelector('.edit-btn');
             if (editBtn) {
                 editBtn.addEventListener('click', () => {
-                    window.editSpare(id, rawName, qty, rawBarcode, used); // Passed used to edit function
+                    window.editSpare(id, rawName, qty, rawBarcode, used);
                 });
             }
 
@@ -131,6 +156,60 @@ function initInventoryListener() {
             inventoryTableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-500">Error loading inventory data.</td></tr>`;
         }
     });
+}
+
+// --- USAGE TRACKER FILTER HANDLER ---
+if (checkUsageBtn) {
+    checkUsageBtn.addEventListener('click', () => {
+        const startVal = startDateInput ? startDateInput.value : '';
+        const endVal = endDateInput ? endDateInput.value : '';
+
+        if (!startVal || !endVal) {
+            alert("Please select both a start and end date.");
+            return;
+        }
+
+        const startDate = new Date(startVal);
+        startDate.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(endVal);
+        endDate.setHours(23, 59, 59, 999);
+
+        const filteredSpares = currentInventoryData.filter(item => {
+            if (item.used <= 0) return false;
+            
+            let itemDate = new Date();
+            if (item.updatedAt) {
+                itemDate = typeof item.updatedAt.toDate === 'function' ? item.updatedAt.toDate() : new Date(item.updatedAt);
+            }
+
+            return itemDate >= startDate && itemDate <= endDate;
+        });
+
+        displayUsageResults(filteredSpares);
+    });
+}
+
+function displayUsageResults(spares) {
+    if (!usageList || !usageResults) return;
+
+    usageList.innerHTML = '';
+
+    if (spares.length === 0) {
+        usageList.innerHTML = '<li class="py-2 text-gray-500 text-center">No spares used in this timeframe.</li>';
+    } else {
+        spares.forEach(spare => {
+            const li = document.createElement('li');
+            li.className = "py-2 flex justify-between items-center";
+            li.innerHTML = `
+                <span class="font-medium text-gray-700">${escapeHtml(spare.name)}</span>
+                <span class="text-orange-600 font-bold">-${spare.used} used</span>
+            `;
+            usageList.appendChild(li);
+        });
+    }
+
+    usageResults.classList.remove('hidden');
 }
 
 // --- LIVE BARCODE GENERATOR PREVIEW ---
@@ -166,12 +245,11 @@ if (generateBarcodeBtn) {
         const randomSku = 'SKU-' + Math.floor(10000000 + Math.random() * 90000000);
         if (spareBarcodeInput) {
             spareBarcodeInput.value = randomSku;
-            spareBarcodeInput.dispatchEvent(new Event('input')); // Triggers preview update
+            spareBarcodeInput.dispatchEvent(new Event('input'));
         }
     });
 }
 
-// --- PRINT SINGLE BARCODE LISTENER ---
 if (printBarcodeBtn) {
     printBarcodeBtn.addEventListener('click', () => {
         window.print();
@@ -182,21 +260,31 @@ if (printBarcodeBtn) {
 if (spareForm) {
     spareForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
         const id = editIdInput ? editIdInput.value : '';
         const name = spareNameInput ? spareNameInput.value.trim() : '';
         const quantity = spareQtyInput ? parseInt(spareQtyInput.value, 10) : 0;
-        const used = spareUsedInput ? parseInt(spareUsedInput.value, 10) : 0; // NEW: Get used value
+        const used = spareUsedInput ? parseInt(spareUsedInput.value, 10) : 0;
         const barcode = spareBarcodeInput ? spareBarcodeInput.value.trim() : '';
 
         try {
             if (id) {
-                // Update existing record
-                await updateDoc(doc(db, "spare", id), { name, quantity, used, barcode }); 
+                await updateDoc(doc(db, "spare", id), {
+                    name,
+                    quantity,
+                    used,
+                    barcode,
+                    updatedAt: new Date()
+                });
                 resetForm();
             } else {
-                // Create new record
-                await addDoc(collection(db, "spare"), { name, quantity, used, barcode, createdAt: new Date() });
+                await addDoc(collection(db, "spare"), {
+                    name,
+                    quantity,
+                    used,
+                    barcode,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                });
                 spareForm.reset();
                 if (barcodePreview) barcodePreview.innerHTML = "";
             }
@@ -207,7 +295,6 @@ if (spareForm) {
     });
 }
 
-// --- PRINT DATABASE BUTTON ---
 if (printDbBtn) {
     printDbBtn.addEventListener('click', () => {
         window.print();
@@ -215,22 +302,20 @@ if (printDbBtn) {
 }
 
 // --- GLOBAL ACTIONS ---
-window.editSpare = function(id, name, quantity, barcode, used = 0) { // NEW: added used param
+window.editSpare = function(id, name, quantity, barcode, used = 0) {
     if (editIdInput) editIdInput.value = id;
     if (spareNameInput) spareNameInput.value = name;
     if (spareQtyInput) spareQtyInput.value = quantity;
-    if (spareUsedInput) spareUsedInput.value = used; // Populate used field
+    if (spareUsedInput) spareUsedInput.value = used;
     if (spareBarcodeInput) spareBarcodeInput.value = barcode;
-    
     generateBarcodeSVG(barcode);
-    
+
     if (formTitle) formTitle.textContent = "Edit Spare";
     if (saveBtn) {
         saveBtn.textContent = "Update Spare";
         saveBtn.className = "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-medium";
     }
     if (cancelBtn) cancelBtn.classList.remove('hidden');
-    
     if (spareNameInput) spareNameInput.focus();
 };
 
@@ -255,8 +340,7 @@ function resetForm() {
     if (spareForm) spareForm.reset();
     if (editIdInput) editIdInput.value = "";
     if (barcodePreview) barcodePreview.innerHTML = "";
-    if (spareUsedInput) spareUsedInput.value = "0"; // Reset used field explicitly
-    
+    if (spareUsedInput) spareUsedInput.value = "0";
     if (formTitle) formTitle.textContent = "Add New Spare";
     if (saveBtn) {
         saveBtn.textContent = "Save Spare";
@@ -265,7 +349,6 @@ function resetForm() {
     if (cancelBtn) cancelBtn.classList.add('hidden');
 }
 
-// --- HELPER FUNCTION ---
 function escapeHtml(str) {
     if (!str) return "";
     return str.toString()
@@ -276,15 +359,13 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
 }
 
-
 // --- BARCODE SCANNER LOGIC (HARDWARE SCANNER INTERCEPT) ---
 let barcodeBuffer = "";
 let barcodeTimer = null;
 
 document.addEventListener("keydown", (e) => {
-    // Ignore if typing inside the form fields
     if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
-        return; 
+        return;
     }
 
     if (e.key === "Enter") {
@@ -300,37 +381,32 @@ document.addEventListener("keydown", (e) => {
         clearTimeout(barcodeTimer);
         barcodeTimer = setTimeout(() => {
             barcodeBuffer = "";
-        }, 50); 
+        }, 50);
     }
 });
 
 async function processScannedBarcode(scannedCode) {
     try {
-        // Query Firestore to find the item with this barcode
         const q = query(collection(db, "spare"), where("barcode", "==", scannedCode));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            // Document found, get the first match
             const docSnap = querySnapshot.docs[0];
             const data = docSnap.data();
-            
-            let currentQty = Number(data.quantity) || 0;
-            let currentUsed = Number(data.used) || 0;
 
-            // Decrease Qty by 1 (don't go below 0), Increase Used by 1
+            let currentQty = Number(data.quantity) || 0;
+            let currentUsed = (data.used !== undefined && data.used !== null) ? Number(data.used) : 0;
+
             let newQty = currentQty > 0 ? currentQty - 1 : 0;
             let newUsed = currentUsed + 1;
 
-            // Update Firestore directly
             await updateDoc(doc(db, "spare", docSnap.id), {
                 quantity: newQty,
-                used: newUsed
+                used: newUsed,
+                updatedAt: new Date()
             });
-            
+
             console.log(`Scanned! ${data.name} updated. Qty: ${newQty}, Used: ${newUsed}`);
-            // Optional: You can uncomment the line below to show an alert to the user
-            // alert(`Scanned! ${data.name} marked as used.`);
         } else {
             console.log("Barcode not found in database.");
         }
