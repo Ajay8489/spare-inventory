@@ -4,8 +4,8 @@ import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https:/
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // --- FIREBASE CONFIGURATION ---
-const firebaseConfig = {
-      apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
+const firebaseConfig = { 
+    apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
     authDomain: "experiment-51058.firebaseapp.com",
     projectId: "experiment-51058",
     storageBucket: "experiment-51058.firebasestorage.app",
