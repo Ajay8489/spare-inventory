@@ -1,6 +1,0 @@
-{
-  "name": "Spare",
-  "description": "Spare parts and components inventory management system with authentication, camera teardown animation, live barcode generation, and usage tracking.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
