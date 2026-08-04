@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" class="dark h-full">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spare — Spare Parts & Component Management</title>
@@ -11,839 +11,649 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/index.css" />
     <style>
-      body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-      }
-      .font-mono {
-        font-family: 'JetBrains Mono', monospace;
-      }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
     </style>
-  </head>
-  <body class="bg-slate-950 text-slate-100 min-h-full flex flex-col selection:bg-amber-500 selection:text-slate-950">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
     <!-- ========================================== -->
     <!-- 1. FULLSCREEN INTRO ANIMATION OVERLAY      -->
     <!-- ========================================== -->
     <div id="intro-overlay" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-between p-6 transition-all duration-700">
-      
-      <!-- Intro Header -->
-      <div class="w-full max-w-4xl flex items-center justify-between border-b border-slate-800 pb-4">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-bold text-slate-950 shadow-lg shadow-amber-500/20">
-            <svg class="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <!-- Intro Header -->
+        <div class="w-full max-w-4xl flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-bold text-slate-950 shadow-lg shadow-amber-500/20">
+                    <svg class="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-wider text-slate-100 flex items-center gap-2">
+                        SPARE <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">TEARDOWN & ASSEMBLY</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Interactive Camera Assembly & Component Diagnostic Telemetry</p>
+                </div>
+            </div>
+            <!-- Robust Skip Button with Inline Fallback Handler -->
+            <button id="skip-intro-btn" onclick="document.getElementById('intro-overlay').style.display='none'; sessionStorage.setItem('skip-anim', 'true');" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition flex items-center space-x-2 group cursor-pointer">
+                <span>Skip Animation</span>
+                <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Interactive SVG Canvas Teardown Display -->
+        <div class="relative w-full max-w-4xl h-80 sm:h-96 my-auto flex items-center justify-center bg-slate-900/60 rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden">
+            <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:24px_24px] opacity-30"></div>
+            <div id="laser-line" class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_#f59e0b] animate-scan z-20"></div>
+            
+            <svg id="camera-svg-animation" viewBox="0 0 800 400" class="w-full h-full relative z-10 p-4">
+                <defs>
+                    <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/>
+                        <stop offset="50%" stop-color="#0284c7" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="#0369a1" stop-opacity="0.9"/>
+                    </linearGradient>
+                    <linearGradient id="sensorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#f59e0b"/>
+                        <stop offset="50%" stop-color="#d97706"/>
+                        <stop offset="100%" stop-color="#b45309"/>
+                    </linearGradient>
+                    <linearGradient id="pcbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#059669"/>
+                        <stop offset="100%" stop-color="#047857"/>
+                    </linearGradient>
+                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="4" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+                <rect x="150" y="80" width="500" height="240" rx="16" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4" />
+                <g id="svg-lens-group" class="transition-transform duration-1000 ease-in-out">
+                    <rect x="200" y="120" width="70" height="160" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+                    <path d="M 235 130 A 60 60 0 0 1 235 270" fill="url(#lensGrad)" stroke="#7dd3fc" stroke-width="2" />
+                    <text x="210" y="110" fill="#38bdf8" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: LENS-OPT-50</text>
+                    <line x1="235" y1="120" x2="235" y2="112" stroke="#38bdf8" stroke-width="1" />
+                </g>
+                <g id="svg-aperture-group" class="transition-transform duration-1000 ease-in-out">
+                    <rect x="300" y="130" width="40" height="140" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" />
+                    <path d="M 320 140 L 320 180 L 310 200 L 320 220 L 320 260" stroke="#fbbf24" stroke-width="2" fill="none" />
+                    <text x="290" y="110" fill="#f59e0b" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: APT-BLD-06</text>
+                    <line x1="320" y1="130" x2="320" y2="112" stroke="#f59e0b" stroke-width="1" />
+                </g>
+                <g id="svg-sensor-group" class="transition-transform duration-1000 ease-in-out">
+                    <rect x="370" y="140" width="60" height="120" rx="4" fill="url(#sensorGrad)" stroke="#fef08a" stroke-width="2" filter="url(#glow)" />
+                    <rect x="382" y="160" width="36" height="80" rx="2" fill="#0284c7" stroke="#38bdf8" stroke-width="1" />
+                    <line x1="382" y1="200" x2="418" y2="200" stroke="#7dd3fc" stroke-width="1" opacity="0.7"/>
+                    <line x1="400" y1="160" x2="400" y2="240" stroke="#7dd3fc" stroke-width="1" opacity="0.7"/>
+                    <text x="365" y="110" fill="#fef08a" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: CMOS-4K-24MP</text>
+                    <line x1="400" y1="140" x2="400" y2="112" stroke="#fef08a" stroke-width="1" />
+                </g>
+                <g id="svg-pcb-group" class="transition-transform duration-1000 ease-in-out">
+                    <rect x="460" y="110" width="65" height="180" rx="6" fill="url(#pcbGrad)" stroke="#34d399" stroke-width="2" />
+                    <rect x="475" y="160" width="35" height="40" rx="2" fill="#0f172a" stroke="#6ee7b7" stroke-width="1" />
+                    <text x="480" y="184" fill="#6ee7b7" font-size="8" font-family="JetBrains Mono">DSP-AI</text>
+                    <text x="455" y="110" fill="#34d399" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: PCB-MAIN-01</text>
+                    <line x1="492" y1="110" x2="492" y2="112" stroke="#34d399" stroke-width="1" />
+                </g>
+                <g id="svg-body-group" class="transition-transform duration-1000 ease-in-out">
+                    <rect x="550" y="100" width="75" height="200" rx="12" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
+                    <rect x="565" y="140" width="45" height="120" rx="4" fill="#334155" stroke="#64748b" stroke-width="1" />
+                    <text x="545" y="110" fill="#cbd5e1" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: HSG-ALU-R2</text>
+                    <line x1="587" y1="100" x2="587" y2="112" stroke="#cbd5e1" stroke-width="1" />
+                </g>
+                <line x1="120" y1="200" x2="680" y2="200" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" opacity="0.4" />
             </svg>
-          </div>
-          <div>
-            <h1 class="text-xl font-extrabold tracking-wider text-slate-100 flex items-center gap-2">
-              SPARE <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">TEARDOWN & ASSEMBLY</span>
-            </h1>
-            <p class="text-xs text-slate-400">Interactive Camera Assembly & Component Diagnostic Telemetry</p>
-          </div>
+
+            <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur border border-slate-700/60 rounded-lg px-3 py-1.5 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                <span id="intro-phase-text" class="text-xs font-mono text-amber-300 font-semibold">Initializing Component Database...</span>
+            </div>
         </div>
 
-        <button id="skip-intro-btn" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition flex items-center space-x-2 group">
-          <span>Skip Animation</span>
-          <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Interactive SVG Canvas Teardown Display -->
-      <div class="relative w-full max-w-4xl h-80 sm:h-96 my-auto flex items-center justify-center bg-slate-900/60 rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden">
-        
-        <!-- Blueprint Grid Overlay -->
-        <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:24px_24px] opacity-30"></div>
-        
-        <!-- Laser Scan Line -->
-        <div id="laser-line" class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_#f59e0b] animate-scan z-20"></div>
-
-        <!-- SVG Camera Module Interactive Vector -->
-        <svg id="camera-svg-animation" viewBox="0 0 800 400" class="w-full h-full relative z-10 p-4">
-          <defs>
-            <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/>
-              <stop offset="50%" stop-color="#0284c7" stop-opacity="0.4"/>
-              <stop offset="100%" stop-color="#0369a1" stop-opacity="0.9"/>
-            </linearGradient>
-            <linearGradient id="sensorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#f59e0b"/>
-              <stop offset="50%" stop-color="#d97706"/>
-              <stop offset="100%" stop-color="#b45309"/>
-            </linearGradient>
-            <linearGradient id="pcbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#059669"/>
-              <stop offset="100%" stop-color="#047857"/>
-            </linearGradient>
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          <!-- Outer Housing Reference Frame -->
-          <rect x="150" y="80" width="500" height="240" rx="16" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4" />
-
-          <!-- Group 1: Outer Lens Ring & Optics (Explodes Left) -->
-          <g id="svg-lens-group" class="transition-transform duration-1000 ease-in-out">
-            <!-- Front Lens Barrel -->
-            <rect x="200" y="120" width="70" height="160" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-            <!-- Glass Element 1 -->
-            <path d="M 235 130 A 60 60 0 0 1 235 270" fill="url(#lensGrad)" stroke="#7dd3fc" stroke-width="2" />
-            <!-- Lens Label -->
-            <text x="210" y="110" fill="#38bdf8" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: LENS-OPT-50</text>
-            <line x1="235" y1="120" x2="235" y2="112" stroke="#38bdf8" stroke-width="1" />
-          </g>
-
-          <!-- Group 2: Aperture Diaphragm Ring (Explodes Slightly Left) -->
-          <g id="svg-aperture-group" class="transition-transform duration-1000 ease-in-out">
-            <rect x="300" y="130" width="40" height="140" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" />
-            <!-- Blades -->
-            <path d="M 320 140 L 320 180 L 310 200 L 320 220 L 320 260" stroke="#fbbf24" stroke-width="2" fill="none" />
-            <text x="290" y="110" fill="#f59e0b" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: APT-BLD-06</text>
-            <line x1="320" y1="130" x2="320" y2="112" stroke="#f59e0b" stroke-width="1" />
-          </g>
-
-          <!-- Group 3: CMOS Image Sensor Chip (Center Component) -->
-          <g id="svg-sensor-group" class="transition-transform duration-1000 ease-in-out">
-            <!-- Silicon Package -->
-            <rect x="370" y="140" width="60" height="120" rx="4" fill="url(#sensorGrad)" stroke="#fef08a" stroke-width="2" filter="url(#glow)" />
-            <!-- Sensor Die -->
-            <rect x="382" y="160" width="36" height="80" rx="2" fill="#0284c7" stroke="#38bdf8" stroke-width="1" />
-            <!-- Grid lines on die -->
-            <line x1="382" y1="200" x2="418" y2="200" stroke="#7dd3fc" stroke-width="1" opacity="0.7"/>
-            <line x1="400" y1="160" x2="400" y2="240" stroke="#7dd3fc" stroke-width="1" opacity="0.7"/>
-            <text x="365" y="110" fill="#fef08a" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: CMOS-4K-24MP</text>
-            <line x1="400" y1="140" x2="400" y2="112" stroke="#fef08a" stroke-width="1" />
-          </g>
-
-          <!-- Group 4: Main PCB & Controller (Explodes Right) -->
-          <g id="svg-pcb-group" class="transition-transform duration-1000 ease-in-out">
-            <rect x="460" y="110" width="65" height="180" rx="6" fill="url(#pcbGrad)" stroke="#34d399" stroke-width="2" />
-            <!-- Microchip -->
-            <rect x="475" y="160" width="35" height="40" rx="2" fill="#0f172a" stroke="#6ee7b7" stroke-width="1" />
-            <text x="480" y="184" fill="#6ee7b7" font-size="8" font-family="JetBrains Mono">DSP-AI</text>
-            <text x="455" y="110" fill="#34d399" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: PCB-MAIN-01</text>
-            <line x1="492" y1="110" x2="492" y2="112" stroke="#34d399" stroke-width="1" />
-          </g>
-
-          <!-- Group 5: Rear Housing & Battery Mount (Explodes Far Right) -->
-          <g id="svg-body-group" class="transition-transform duration-1000 ease-in-out">
-            <rect x="550" y="100" width="75" height="200" rx="12" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
-            <!-- Battery Bay -->
-            <rect x="565" y="140" width="45" height="120" rx="4" fill="#334155" stroke="#64748b" stroke-width="1" />
-            <text x="545" y="110" fill="#cbd5e1" font-size="10" font-family="JetBrains Mono" font-weight="bold">SKU: HSG-ALU-R2</text>
-            <line x1="587" y1="100" x2="587" y2="112" stroke="#cbd5e1" stroke-width="1" />
-          </g>
-
-          <!-- Connecting Light Pulses & Axis Line -->
-          <line x1="120" y1="200" x2="680" y2="200" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" opacity="0.4" />
-        </svg>
-
-        <!-- Dynamic Phase Overlay Badge -->
-        <div class="absolute bottom-4 left-4 bg-slate-950/80 backdrop-blur border border-slate-700/60 rounded-lg px-3 py-1.5 flex items-center space-x-2">
-          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-          <span id="intro-phase-text" class="text-xs font-mono text-amber-300 font-semibold">Initializing Component Database...</span>
+        <div class="w-full max-w-4xl space-y-2">
+            <div class="flex justify-between items-center text-xs font-mono text-slate-400">
+                <span id="intro-status-label">Phase 1 / 4: System Telemetry Verification</span>
+                <span id="intro-percent" class="text-amber-400 font-bold">0%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
+                <div id="intro-progress-bar" class="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-amber-300 rounded-full w-0 transition-all duration-300 ease-out shadow-[0_0_10px_#f59e0b]"></div>
+            </div>
         </div>
-      </div>
-
-      <!-- Intro Progress Bar -->
-      <div class="w-full max-w-4xl space-y-2">
-        <div class="flex justify-between items-center text-xs font-mono text-slate-400">
-          <span id="intro-status-label">Phase 1 / 4: System Telemetry Verification</span>
-          <span id="intro-percent" class="text-amber-400 font-bold">0%</span>
-        </div>
-        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
-          <div id="intro-progress-bar" class="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-amber-300 rounded-full w-0 transition-all duration-300 ease-out shadow-[0_0_10px_#f59e0b]"></div>
-        </div>
-      </div>
     </div>
-
 
     <!-- ========================================== -->
     <!-- 2. LOCAL AUTHENTICATION SCREEN (#login-view)-->
     <!-- ========================================== -->
     <div id="login-view" class="min-h-screen w-full flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
-      <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl border-t-4 border-t-amber-500">
-        
-        <!-- Login Header -->
-        <div class="p-8 pb-6 text-center border-b border-slate-800/80">
-          <div class="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20 mb-3">
-            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-          </div>
-          <h2 class="text-2xl font-extrabold text-white tracking-tight">Spare Inventory Login</h2>
-          <p class="text-sm text-slate-400 mt-1">Authentication & Component Authorization System</p>
-        </div>
-
-        <!-- Login Form -->
-        <form id="login-form" class="p-8 space-y-5">
-          <!-- Error Alert Banner -->
-          <div id="login-error" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-medium flex items-center space-x-2">
-            <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-            </svg>
-            <span id="login-error-text">Invalid username or password.</span>
-          </div>
-
-          <div>
-            <label for="login-username" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Username / Operator ID</label>
-            <div class="relative">
-              <input id="login-username" type="text" value="admin" required class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition text-sm font-mono" placeholder="Enter username..." />
+        <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl border-t-4 border-t-amber-500">
+            <div class="p-8 pb-6 text-center border-b border-slate-800/80">
+                <div class="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20 mb-3">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">Spare Inventory Login</h2>
+                <p class="text-sm text-slate-400 mt-1">Authentication & Component Authorization System</p>
             </div>
-          </div>
-
-          <div>
-            <label for="login-password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Access Key / Password</label>
-            <div class="relative">
-              <input id="login-password" type="password" value="spare123" required class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition text-sm font-mono" placeholder="Enter password..." />
+            
+            <form id="login-form" class="p-8 space-y-5">
+                <div id="login-error" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-medium flex items-center space-x-2">
+                    <svg class="w-4 h-4 shrink-0 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <span id="login-error-text">Invalid username or password.</span>
+                </div>
+                <div>
+                    <label for="login-username" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Username / Operator ID</label>
+                    <input id="login-username" type="text" value="admin" required class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition text-sm font-mono" placeholder="Enter username..." />
+                </div>
+                <div>
+                    <label for="login-password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Access Key / Password</label>
+                    <input id="login-password" type="password" value="spare123" required class="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition text-sm font-mono" placeholder="Enter password..." />
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900" />
+                        <span>Remember session</span>
+                    </label>
+                    <span class="text-slate-500 text-xs">Local Storage Enforced</span>
+                </div>
+                <button type="submit" class="w-full py-3.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/25 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
+                    <span>Sign In to Dashboard</span>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+                <button id="quick-demo-login-btn" type="button" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-xs font-semibold transition flex items-center justify-center space-x-2">
+                    <span>⚡ Instant Demo Access (No Auth Key Required)</span>
+                </button>
+            </form>
+            <div class="px-8 py-4 bg-slate-950/60 border-t border-slate-800 text-center">
+                <p class="text-xs text-slate-400">Default Credentials: <code class="text-amber-400 font-mono">admin</code> / <code class="text-amber-400 font-mono">spare123</code></p>
             </div>
-          </div>
-
-          <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="checkbox" checked class="w-4 h-4 rounded bg-slate-950 border-slate-700 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900" />
-              <span>Remember session</span>
-            </label>
-            <span class="text-slate-500 text-xs">Local Storage Enforced</span>
-          </div>
-
-          <button type="submit" class="w-full py-3.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/25 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
-            <span>Sign In to Dashboard</span>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </button>
-
-          <!-- 1-Click Quick Demo Login Button -->
-          <button id="quick-demo-login-btn" type="button" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-xs font-semibold transition flex items-center justify-center space-x-2">
-            <span>⚡ Instant Demo Access (No Auth Key Required)</span>
-          </button>
-        </form>
-
-        <div class="px-8 py-4 bg-slate-950/60 border-t border-slate-800 text-center">
-          <p class="text-xs text-slate-400">Default Credentials: <code class="text-amber-400 font-mono">admin</code> / <code class="text-amber-400 font-mono">spare123</code></p>
         </div>
-      </div>
     </div>
-
 
     <!-- ========================================== -->
     <!-- 3. SPARE DASHBOARD APPLICATION MAIN VIEW   -->
     <!-- ========================================== -->
     <div id="dashboard-view" class="hidden min-h-screen flex-col flex-1">
-      
-      <!-- Top Navigation Bar -->
-      <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          
-          <!-- Logo & Title -->
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 shadow-md shadow-amber-500/20">
-              <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+        <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 shadow-md shadow-amber-500/20">
+                        <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-lg font-black tracking-tight text-white">Spare Dashboard</h1>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">LIVE V2.4</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Precision Spare Parts & Component Management</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="replay-anim-btn" title="Replay SVG Teardown Animation" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center space-x-1.5">
+                        <svg class="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="hidden sm:inline">Teardown SVG</span>
+                    </button>
+                    <div class="hidden md:flex items-center space-x-2 pl-3 border-l border-slate-800 text-xs">
+                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                        <span id="nav-user-label" class="font-mono text-slate-300">Operator: admin</span>
+                    </div>
+                    <button id="logout-btn" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition flex items-center space-x-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <h1 class="text-lg font-black tracking-tight text-white">Spare Dashboard</h1>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">LIVE V2.4</span>
-              </div>
-              <p class="text-xs text-slate-400">Precision Spare Parts & Component Management</p>
-            </div>
-          </div>
+        </header>
 
-          <!-- User Session & Quick Actions -->
-          <div class="flex items-center space-x-3">
-            <button id="replay-anim-btn" title="Replay SVG Teardown Animation" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center space-x-1.5">
-              <svg class="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span class="hidden sm:inline">Teardown SVG</span>
-            </button>
-
-            <div class="hidden md:flex items-center space-x-2 pl-3 border-l border-slate-800 text-xs">
-              <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-              <span id="nav-user-label" class="font-mono text-slate-300">Operator: admin</span>
-            </div>
-
-            <button id="logout-btn" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition flex items-center space-x-1.5">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-
-      <!-- Main Content Container -->
-      <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-        <!-- Top Header & Action Banner -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div>
-            <h2 class="text-xl font-extrabold text-white">Component Inventory & Spare Parts Center</h2>
-            <p class="text-sm text-slate-400 mt-1">Track component quantities, generate live Code128 barcodes, print labels, and audit usage logs.</p>
-          </div>
-          <div class="flex flex-wrap items-center gap-3">
-            <button id="btn-add-spare" class="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center space-x-2">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-              </svg>
-              <span>+ Add New Spare</span>
-            </button>
-            
-            <button id="btn-log-usage-quick" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-xl transition flex items-center space-x-2">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Log Part Usage</span>
-            </button>
-
-            <button id="btn-print-db" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center space-x-2">
-              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z" />
-              </svg>
-              <span>Print Database</span>
-            </button>
-          </div>
-        </div>
-
-
-        <!-- SUMMARY METRICS CARDS (4 Grid Cards) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          <!-- Card 1: Unique Items -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Unique Items</span>
-              <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-            </div>
-            <div id="metric-unique-items" class="text-3xl font-black text-white mt-3 font-mono">0</div>
-            <p class="text-xs text-slate-500 mt-1">Distinct spare SKUs</p>
-          </div>
-
-          <!-- Card 2: Total Stock Quantity -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Stock Quantity</span>
-              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                </svg>
-              </div>
-            </div>
-            <div id="metric-total-stock" class="text-3xl font-black text-emerald-400 mt-3 font-mono">0</div>
-            <p class="text-xs text-slate-500 mt-1">Units available in bin storage</p>
-          </div>
-
-          <!-- Card 3: Total Used Quantity -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Used Quantity</span>
-              <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-            </div>
-            <div id="metric-total-used" class="text-3xl font-black text-sky-400 mt-3 font-mono">0</div>
-            <p class="text-xs text-slate-500 mt-1">Units consumed across repairs</p>
-          </div>
-
-          <!-- Card 4: Low Stock Alerts -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Low Stock Alerts</span>
-              <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-            </div>
-            <div id="metric-low-stock" class="text-3xl font-black text-rose-400 mt-3 font-mono">0</div>
-            <p class="text-xs text-slate-500 mt-1">Items at or below reorder limit</p>
-          </div>
-
-        </div>
-
-
-        <!-- MAIN TAB SWITCHER -->
-        <div class="border-b border-slate-800 flex items-center space-x-2">
-          <button id="tab-btn-inventory" class="px-5 py-3 text-sm font-bold border-b-2 border-amber-500 text-amber-400 flex items-center space-x-2 transition">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            <span>Inventory Database</span>
-          </button>
-
-          <button id="tab-btn-usage" class="px-5 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 transition">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <span>Spare Usage Tracker</span>
-          </button>
-
-          <button id="tab-btn-barcode" class="px-5 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 transition">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-            </svg>
-            <span>Barcode Studio</span>
-          </button>
-        </div>
-
-
-        <!-- ========================================== -->
-        <!-- TAB 1: INVENTORY DATABASE TABLE            -->
-        <!-- ========================================== -->
-        <div id="tab-content-inventory" class="space-y-6">
-          
-          <!-- Filter & Search Control Panel -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
-            
-            <!-- Search Box -->
-            <div class="relative w-full md:w-80">
-              <input id="search-inventory" type="text" placeholder="Search by name, SKU, barcode, location..." class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
-              <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white">Component Inventory & Spare Parts Center</h2>
+                    <p class="text-sm text-slate-400 mt-1">Track component quantities, generate live Code128 barcodes, print labels, and audit usage logs.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="btn-add-spare" class="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>+ Add New Spare</span>
+                    </button>
+                    <button id="btn-log-usage-quick" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-xl transition flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Log Part Usage</span>
+                    </button>
+                    <button id="btn-print-db" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        <span>Print Database</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-              <!-- Category Filter -->
-              <select id="filter-category" class="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-                <option value="ALL">All Categories</option>
-                <option value="Optics">Optics</option>
-                <option value="Sensors">Sensors</option>
-                <option value="Mechanical">Mechanical</option>
-                <option value="Circuitry">Circuitry</option>
-                <option value="Power">Power</option>
-                <option value="Fasteners">Fasteners</option>
-                <option value="Accessories">Accessories</option>
-              </select>
-
-              <!-- Stock Status Filter -->
-              <select id="filter-status" class="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-                <option value="ALL">All Stock Levels</option>
-                <option value="IN_STOCK">In Stock (>5)</option>
-                <option value="LOW_STOCK">Low Stock (1-5)</option>
-                <option value="OUT_OF_STOCK">Out of Stock (0)</option>
-              </select>
-
-              <button id="reset-filters-btn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl border border-slate-700 text-xs transition" title="Reset Filters">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Unique Items</span>
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="metric-unique-items" class="text-3xl font-black text-white mt-3 font-mono">0</div>
+                    <p class="text-xs text-slate-500 mt-1">Distinct spare SKUs</p>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Stock Quantity</span>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="metric-total-stock" class="text-3xl font-black text-emerald-400 mt-3 font-mono">0</div>
+                    <p class="text-xs text-slate-500 mt-1">Units available in bin storage</p>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Used Quantity</span>
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="metric-total-used" class="text-3xl font-black text-sky-400 mt-3 font-mono">0</div>
+                    <p class="text-xs text-slate-500 mt-1">Units consumed across repairs</p>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Low Stock Alerts</span>
+                        <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="metric-low-stock" class="text-3xl font-black text-rose-400 mt-3 font-mono">0</div>
+                    <p class="text-xs text-slate-500 mt-1">Items at or below reorder limit</p>
+                </div>
             </div>
 
-          </div>
-
-          <!-- Inventory Table Container -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <div class="overflow-x-auto custom-scrollbar">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr class="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    <th class="py-4 px-6">Spare Name & Category</th>
-                    <th class="py-4 px-6">Barcode / SKU</th>
-                    <th class="py-4 px-6">Stock Level</th>
-                    <th class="py-4 px-6">Used Qty</th>
-                    <th class="py-4 px-6">Bin / Unit Cost</th>
-                    <th class="py-4 px-6 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="inventory-table-body" class="divide-y divide-slate-800/60 text-sm">
-                  <!-- Rendered dynamically by app.js -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Empty State -->
-            <div id="inventory-empty-state" class="hidden p-12 text-center space-y-3">
-              <div class="w-12 h-12 rounded-full bg-slate-800 text-slate-500 mx-auto flex items-center justify-center">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                </svg>
-              </div>
-              <p class="text-slate-300 font-medium">No spare parts match your query.</p>
-              <p class="text-xs text-slate-500">Try adjusting your search terms or add a new spare item.</p>
-            </div>
-          </div>
-
-        </div>
-
-
-        <!-- ========================================== -->
-        <!-- TAB 2: SPARE USAGE TRACKER SECTION         -->
-        <!-- ========================================== -->
-        <div id="tab-content-usage" class="hidden space-y-6">
-          
-          <!-- Date Range Selector Bar -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-base font-bold text-white flex items-center gap-2">
-                  <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  Historical Spare Usage Auditor
-                </h3>
-                <p class="text-xs text-slate-400 mt-0.5">Filter consumption records by custom date ranges to track part depletion rates.</p>
-              </div>
-
-              <button id="btn-open-usage-modal" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl transition flex items-center space-x-1.5">
-                <span>+ Log New Usage Event</span>
-              </button>
-            </div>
-
-            <!-- Date Range Controls -->
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end pt-2 border-t border-slate-800/80">
-              
-              <div class="sm:col-span-4">
-                <label for="usage-from-date" class="block text-xs font-semibold text-slate-400 mb-1">From Date</label>
-                <input id="usage-from-date" type="date" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
-              </div>
-
-              <div class="sm:col-span-4">
-                <label for="usage-to-date" class="block text-xs font-semibold text-slate-400 mb-1">To Date</label>
-                <input id="usage-to-date" type="date" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
-              </div>
-
-              <div class="sm:col-span-4 flex items-center space-x-2">
-                <button id="btn-check-usage" type="button" class="flex-1 py-2 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow transition">
-                  Check Usage Report
+            <div class="border-b border-slate-800 flex items-center space-x-2">
+                <button id="tab-btn-inventory" class="px-5 py-3 text-sm font-bold border-b-2 border-amber-500 text-amber-400 flex items-center space-x-2 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                    <span>Inventory Database</span>
                 </button>
-                <button id="btn-reset-usage-dates" type="button" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl border border-slate-700 transition" title="Clear Date Filter">
-                  Reset
+                <button id="tab-btn-usage" class="px-5 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span>Spare Usage Tracker</span>
                 </button>
-              </div>
-
-            </div>
-          </div>
-
-
-          <!-- Usage Statistics Summary -->
-          <div id="usage-report-summary" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            
-            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
-              <span class="text-xs font-semibold text-slate-400 uppercase">Filtered Units Consumed</span>
-              <div id="usage-sum-units" class="text-2xl font-black text-amber-400 mt-1 font-mono">0 units</div>
-              <p class="text-[11px] text-slate-500 mt-1">Total parts used in selected date window</p>
+                <button id="tab-btn-barcode" class="px-5 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                    <span>Barcode Studio</span>
+                </button>
             </div>
 
-            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
-              <span class="text-xs font-semibold text-slate-400 uppercase">Total Usage Value</span>
-              <div id="usage-sum-cost" class="text-2xl font-black text-emerald-400 mt-1 font-mono">$0.00</div>
-              <p class="text-[11px] text-slate-500 mt-1">Cost of parts consumed</p>
-            </div>
-
-            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
-              <span class="text-xs font-semibold text-slate-400 uppercase">Top Depleted Category</span>
-              <div id="usage-top-category" class="text-lg font-bold text-sky-400 mt-1">Optics & Lenses</div>
-              <p class="text-[11px] text-slate-500 mt-1">Highest frequency component type</p>
-            </div>
-
-          </div>
-
-
-          <!-- Usage History Table -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <div class="overflow-x-auto custom-scrollbar">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr class="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    <th class="py-4 px-6">Timestamp & Date</th>
-                    <th class="py-4 px-6">Spare Part Name & SKU</th>
-                    <th class="py-4 px-6">Qty Consumed</th>
-                    <th class="py-4 px-6">Technician / Reason</th>
-                    <th class="py-4 px-6 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="usage-table-body" class="divide-y divide-slate-800/60 text-sm">
-                  <!-- Rendered dynamically by app.js -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Empty Usage Log State -->
-            <div id="usage-empty-state" class="hidden p-12 text-center space-y-2">
-              <p class="text-slate-300 font-medium">No usage records found for this date range.</p>
-              <p class="text-xs text-slate-500">Select a wider date range or log a part consumption event.</p>
-            </div>
-          </div>
-
-        </div>
-
-
-        <!-- ========================================== -->
-        <!-- TAB 3: BARCODE STUDIO & LABEL GENERATOR     -->
-        <!-- ========================================== -->
-        <div id="tab-content-barcode" class="hidden space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-            
-            <!-- Controls Panel -->
-            <div class="md:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <h3 class="text-base font-bold text-white flex items-center gap-2">
-                <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                </svg>
-                Barcode Label Generator
-              </h3>
-              <p class="text-xs text-slate-400">Select an existing spare item or enter a custom SKU barcode string to render Code128 vector graphics.</p>
-
-              <div>
-                <label for="studio-spare-select" class="block text-xs font-semibold text-slate-300 mb-1">Select Spare Item</label>
-                <select id="studio-spare-select" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-                  <!-- Populated dynamically -->
-                </select>
-              </div>
-
-              <div>
-                <label for="studio-sku-input" class="block text-xs font-semibold text-slate-300 mb-1">Barcode / SKU String</label>
-                <div class="flex space-x-2">
-                  <input id="studio-sku-input" type="text" class="flex-1 px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-100 font-mono focus:outline-none focus:border-amber-500" placeholder="SPR-900123" />
-                  <button id="studio-gen-sku-btn" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-semibold rounded-xl border border-slate-700">Gen</button>
-                </div>
-              </div>
-
-              <div>
-                <label for="studio-part-name" class="block text-xs font-semibold text-slate-300 mb-1">Part Title on Label</label>
-                <input id="studio-part-name" type="text" value="Optical Camera Spare Part" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
-              </div>
-
-              <div>
-                <label for="studio-part-loc" class="block text-xs font-semibold text-slate-300 mb-1">Storage Bin / Location Tag</label>
-                <input id="studio-part-loc" type="text" value="Bin A-01" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
-              </div>
-
-              <button id="studio-print-btn" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow transition flex items-center justify-center space-x-2">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z" />
-                </svg>
-                <span>Print Single Barcode Label</span>
-              </button>
-            </div>
-
-            <!-- Live Printable Ticket Preview Box -->
-            <div class="md:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[340px]">
-              <span class="text-xs font-mono uppercase text-slate-500 mb-4">Print Label Preview (Code128 Format)</span>
-              
-              <!-- Printable Physical Label Card Mockup -->
-              <div id="studio-label-card" class="bg-white text-slate-950 p-6 rounded-xl border-2 border-slate-300 shadow-2xl max-w-md w-full text-center space-y-3">
-                <div class="border-b border-slate-300 pb-2 flex justify-between items-center text-xs text-slate-600 font-mono">
-                  <span class="font-bold text-slate-900 uppercase">SPARE INVENTORY TAG</span>
-                  <span id="label-card-loc">BIN A-01</span>
+            <!-- TAB 1 -->
+            <div id="tab-content-inventory" class="space-y-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="relative w-full md:w-80">
+                        <input id="search-inventory" type="text" placeholder="Search by name, SKU, barcode, location..." class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
+                        <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <select id="filter-category" class="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                            <option value="ALL">All Categories</option>
+                            <option value="Optics">Optics</option>
+                            <option value="Sensors">Sensors</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Circuitry">Circuitry</option>
+                            <option value="Power">Power</option>
+                            <option value="Fasteners">Fasteners</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                        <select id="filter-status" class="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                            <option value="ALL">All Stock Levels</option>
+                            <option value="IN_STOCK">In Stock (>5)</option>
+                            <option value="LOW_STOCK">Low Stock (1-5)</option>
+                            <option value="OUT_OF_STOCK">Out of Stock (0)</option>
+                        </select>
+                        <button id="reset-filters-btn" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl border border-slate-700 text-xs transition" title="Reset Filters">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <div id="label-card-title" class="text-base font-extrabold text-slate-900 leading-tight">Optical Camera Spare Part</div>
-
-                <!-- SVG Barcode Render Box -->
-                <div class="py-2 flex justify-center bg-slate-50 rounded border border-slate-200">
-                  <svg id="studio-barcode-svg" class="max-w-full"></svg>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <th class="py-4 px-6">Spare Name & Category</th>
+                                    <th class="py-4 px-6">Barcode / SKU</th>
+                                    <th class="py-4 px-6">Stock Level</th>
+                                    <th class="py-4 px-6">Used Qty</th>
+                                    <th class="py-4 px-6">Bin / Unit Cost</th>
+                                    <th class="py-4 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body" class="divide-y divide-slate-800/60 text-sm"></tbody>
+                        </table>
+                    </div>
+                    <div id="inventory-empty-state" class="hidden p-12 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-full bg-slate-800 text-slate-500 mx-auto flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                        </div>
+                        <p class="text-slate-300 font-medium">No spare parts match your query.</p>
+                        <p class="text-xs text-slate-500">Try adjusting your search terms or add a new spare item.</p>
+                    </div>
                 </div>
-
-                <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono pt-1">
-                  <span>SYSTEM: SPARE v2.4</span>
-                  <span>CONFIDENTIAL PARTS</span>
-                </div>
-              </div>
             </div>
 
-          </div>
-        </div>
+            <!-- TAB 2 -->
+            <div id="tab-content-usage" class="hidden space-y-6">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Historical Spare Usage Auditor
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Filter consumption records by custom date ranges to track part depletion rates.</p>
+                        </div>
+                        <button id="btn-open-usage-modal" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl transition flex items-center space-x-1.5">
+                            <span>+ Log New Usage Event</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end pt-2 border-t border-slate-800/80">
+                        <div class="sm:col-span-4">
+                            <label for="usage-from-date" class="block text-xs font-semibold text-slate-400 mb-1">From Date</label>
+                            <input id="usage-from-date" type="date" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
+                        </div>
+                        <div class="sm:col-span-4">
+                            <label for="usage-to-date" class="block text-xs font-semibold text-slate-400 mb-1">To Date</label>
+                            <input id="usage-to-date" type="date" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
+                        </div>
+                        <div class="sm:col-span-4 flex items-center space-x-2">
+                            <button id="btn-check-usage" type="button" class="flex-1 py-2 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow transition">Check Usage Report</button>
+                            <button id="btn-reset-usage-dates" type="button" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl border border-slate-700 transition" title="Clear Date Filter">Reset</button>
+                        </div>
+                    </div>
+                </div>
 
-      </main>
+                <div id="usage-report-summary" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
+                        <span class="text-xs font-semibold text-slate-400 uppercase">Filtered Units Consumed</span>
+                        <div id="usage-sum-units" class="text-2xl font-black text-amber-400 mt-1 font-mono">0 units</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Total parts used in selected date window</p>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
+                        <span class="text-xs font-semibold text-slate-400 uppercase">Total Usage Value</span>
+                        <div id="usage-sum-cost" class="text-2xl font-black text-emerald-400 mt-1 font-mono">$0.00</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Cost of parts consumed</p>
+                    </div>
+                    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
+                        <span class="text-xs font-semibold text-slate-400 uppercase">Top Depleted Category</span>
+                        <div id="usage-top-category" class="text-lg font-bold text-sky-400 mt-1">Optics & Lenses</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Highest frequency component type</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <th class="py-4 px-6">Timestamp & Date</th>
+                                    <th class="py-4 px-6">Spare Part Name & SKU</th>
+                                    <th class="py-4 px-6">Qty Consumed</th>
+                                    <th class="py-4 px-6">Technician / Reason</th>
+                                    <th class="py-4 px-6 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usage-table-body" class="divide-y divide-slate-800/60 text-sm"></tbody>
+                        </table>
+                    </div>
+                    <div id="usage-empty-state" class="hidden p-12 text-center space-y-2">
+                        <p class="text-slate-300 font-medium">No usage records found for this date range.</p>
+                        <p class="text-xs text-slate-500">Select a wider date range or log a part consumption event.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3 -->
+            <div id="tab-content-barcode" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div class="md:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                            </svg>
+                            Barcode Label Generator
+                        </h3>
+                        <p class="text-xs text-slate-400">Select an existing spare item or enter a custom SKU barcode string to render Code128 vector graphics.</p>
+                        <div>
+                            <label for="studio-spare-select" class="block text-xs font-semibold text-slate-300 mb-1">Select Spare Item</label>
+                            <select id="studio-spare-select" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500"></select>
+                        </div>
+                        <div>
+                            <label for="studio-sku-input" class="block text-xs font-semibold text-slate-300 mb-1">Barcode / SKU String</label>
+                            <div class="flex space-x-2">
+                                <input id="studio-sku-input" type="text" class="flex-1 px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-100 font-mono focus:outline-none focus:border-amber-500" placeholder="SPR-900123" />
+                                <button id="studio-gen-sku-btn" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-semibold rounded-xl border border-slate-700">Gen</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="studio-part-name" class="block text-xs font-semibold text-slate-300 mb-1">Part Title on Label</label>
+                            <input id="studio-part-name" type="text" value="Optical Camera Spare Part" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
+                        </div>
+                        <div>
+                            <label for="studio-part-loc" class="block text-xs font-semibold text-slate-300 mb-1">Storage Bin / Location Tag</label>
+                            <input id="studio-part-loc" type="text" value="Bin A-01" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-amber-500" />
+                        </div>
+                        <button id="studio-print-btn" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z" />
+                            </svg>
+                            <span>Print Single Barcode Label</span>
+                        </button>
+                    </div>
+                    <div class="md:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[340px]">
+                        <span class="text-xs font-mono uppercase text-slate-500 mb-4">Print Label Preview (Code128 Format)</span>
+                        <div id="studio-label-card" class="bg-white text-slate-950 p-6 rounded-xl border-2 border-slate-300 shadow-2xl max-w-md w-full text-center space-y-3">
+                            <div class="border-b border-slate-300 pb-2 flex justify-between items-center text-xs text-slate-600 font-mono">
+                                <span class="font-bold text-slate-900 uppercase">SPARE INVENTORY TAG</span>
+                                <span id="label-card-loc">BIN A-01</span>
+                            </div>
+                            <div id="label-card-title" class="text-base font-extrabold text-slate-900 leading-tight">Optical Camera Spare Part</div>
+                            <div class="py-2 flex justify-center bg-slate-50 rounded border border-slate-200">
+                                <svg id="studio-barcode-svg" class="max-w-full"></svg>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] text-slate-500 font-mono pt-1">
+                                <span>SYSTEM: SPARE v2.4</span>
+                                <span>CONFIDENTIAL PARTS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-
-    <!-- ========================================== -->
-    <!-- MODAL 1: ADD / EDIT SPARE ITEM FORM        -->
-    <!-- ========================================== -->
+    <!-- Modals -->
     <div id="spare-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden my-8">
-        
-        <!-- Modal Header -->
-        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-          <h3 id="modal-title" class="text-lg font-bold text-white">Add New Spare Part</h3>
-          <button id="btn-close-spare-modal" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden my-8">
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                <h3 id="modal-title" class="text-lg font-bold text-white">Add New Spare Part</h3>
+                <button id="btn-close-spare-modal" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="spare-form" class="p-6 space-y-4">
+                <input type="hidden" id="form-item-id" value="" />
+                <div>
+                    <label for="form-name" class="block text-xs font-semibold text-slate-300 mb-1">Spare Part Name *</label>
+                    <input id="form-name" type="text" required placeholder="e.g. Optical Zoom Lens Motor 50mm" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="form-category" class="block text-xs font-semibold text-slate-300 mb-1">Category *</label>
+                        <select id="form-category" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                            <option value="Optics">Optics</option>
+                            <option value="Sensors">Sensors</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Circuitry">Circuitry</option>
+                            <option value="Power">Power</option>
+                            <option value="Fasteners">Fasteners</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="form-location" class="block text-xs font-semibold text-slate-300 mb-1">Storage Bin / Location</label>
+                        <input id="form-location" type="text" placeholder="e.g. Bin A-12" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="form-barcode" class="block text-xs font-semibold text-slate-300">Barcode / SKU Code *</label>
+                        <button type="button" id="form-gen-sku-btn" class="text-xs text-amber-400 hover:text-amber-300 font-semibold flex items-center space-x-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>⚡ Generate SKU</span>
+                        </button>
+                    </div>
+                    <input id="form-barcode" type="text" required placeholder="SPR-849204" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
+                </div>
+                <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] font-mono text-slate-500 uppercase block mb-1">Live SVG Barcode Preview</span>
+                    <div class="flex justify-center bg-white p-2 rounded">
+                        <svg id="form-barcode-preview"></svg>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div>
+                        <label for="form-quantity" class="block text-xs font-semibold text-slate-300 mb-1">In Stock *</label>
+                        <input id="form-quantity" type="number" min="0" value="10" required class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
+                    </div>
+                    <div>
+                        <label for="form-used" class="block text-xs font-semibold text-slate-300 mb-1">Used Qty</label>
+                        <input id="form-used" type="number" min="0" value="0" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
+                    </div>
+                    <div>
+                        <label for="form-min-stock" class="block text-xs font-semibold text-slate-300 mb-1">Reorder Limit</label>
+                        <input id="form-min-stock" type="number" min="0" value="5" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
+                    </div>
+                    <div>
+                        <label for="form-cost" class="block text-xs font-semibold text-slate-300 mb-1">Unit Cost ($)</label>
+                        <input id="form-cost" type="number" step="0.01" min="0" value="25.00" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+                    <button type="button" id="form-print-label-btn" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 flex items-center space-x-1.5">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        <span>Print Label</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <button type="button" id="btn-cancel-spare-modal" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700">Cancel</button>
+                        <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow">Save Spare Item</button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <!-- Form Body -->
-        <form id="spare-form" class="p-6 space-y-4">
-          <input type="hidden" id="form-item-id" value="" />
-
-          <!-- Spare Name -->
-          <div>
-            <label for="form-name" class="block text-xs font-semibold text-slate-300 mb-1">Spare Part Name *</label>
-            <input id="form-name" type="text" required placeholder="e.g. Optical Zoom Lens Motor 50mm" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
-          </div>
-
-          <!-- Category & Storage Location -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label for="form-category" class="block text-xs font-semibold text-slate-300 mb-1">Category *</label>
-              <select id="form-category" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-amber-500">
-                <option value="Optics">Optics</option>
-                <option value="Sensors">Sensors</option>
-                <option value="Mechanical">Mechanical</option>
-                <option value="Circuitry">Circuitry</option>
-                <option value="Power">Power</option>
-                <option value="Fasteners">Fasteners</option>
-                <option value="Accessories">Accessories</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="form-location" class="block text-xs font-semibold text-slate-300 mb-1">Storage Bin / Location</label>
-              <input id="form-location" type="text" placeholder="e.g. Bin A-12" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
-            </div>
-          </div>
-
-          <!-- Barcode / SKU + SKU Generator -->
-          <div>
-            <div class="flex justify-between items-center mb-1">
-              <label for="form-barcode" class="block text-xs font-semibold text-slate-300">Barcode / SKU Code *</label>
-              <button type="button" id="form-gen-sku-btn" class="text-xs text-amber-400 hover:text-amber-300 font-semibold flex items-center space-x-1">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span>⚡ Generate SKU</span>
-              </button>
-            </div>
-            <input id="form-barcode" type="text" required placeholder="SPR-849204" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
-          </div>
-
-          <!-- Live Barcode SVG Preview Box -->
-          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center">
-            <span class="text-[10px] font-mono text-slate-500 uppercase block mb-1">Live SVG Barcode Preview</span>
-            <div class="flex justify-center bg-white p-2 rounded">
-              <svg id="form-barcode-preview"></svg>
-            </div>
-          </div>
-
-          <!-- Quantity, Used, Threshold, Cost -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div>
-              <label for="form-quantity" class="block text-xs font-semibold text-slate-300 mb-1">In Stock *</label>
-              <input id="form-quantity" type="number" min="0" value="10" required class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
-            </div>
-
-            <div>
-              <label for="form-used" class="block text-xs font-semibold text-slate-300 mb-1">Used Qty</label>
-              <input id="form-used" type="number" min="0" value="0" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
-            </div>
-
-            <div>
-              <label for="form-min-stock" class="block text-xs font-semibold text-slate-300 mb-1">Reorder Limit</label>
-              <input id="form-min-stock" type="number" min="0" value="5" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
-            </div>
-
-            <div>
-              <label for="form-cost" class="block text-xs font-semibold text-slate-300 mb-1">Unit Cost ($)</label>
-              <input id="form-cost" type="number" step="0.01" min="0" value="25.00" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
-            </div>
-          </div>
-
-          <!-- Buttons -->
-          <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
-            <button type="button" id="form-print-label-btn" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 flex items-center space-x-1.5">
-              <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z" />
-              </svg>
-              <span>Print Label</span>
-            </button>
-
-            <div class="flex items-center space-x-3">
-              <button type="button" id="btn-cancel-spare-modal" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700">Cancel</button>
-              <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow">Save Spare Item</button>
-            </div>
-          </div>
-
-        </form>
-      </div>
     </div>
 
-
-    <!-- ========================================== -->
-    <!-- MODAL 2: LOG SPARE USAGE EVENT MODAL       -->
-    <!-- ========================================== -->
     <div id="usage-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
-        
-        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-          <h3 class="text-lg font-bold text-white">Record Spare Part Usage</h3>
-          <button id="btn-close-usage-modal" class="text-slate-400 hover:text-white p-1 rounded-lg">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">Record Spare Part Usage</h3>
+                <button id="btn-close-usage-modal" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="usage-form" class="p-6 space-y-4">
+                <div>
+                    <label for="usage-select-item" class="block text-xs font-semibold text-slate-300 mb-1">Select Spare Part *</label>
+                    <select id="usage-select-item" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-amber-500"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="usage-qty" class="block text-xs font-semibold text-slate-300 mb-1">Qty Used *</label>
+                        <input id="usage-qty" type="number" min="1" value="1" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
+                    </div>
+                    <div>
+                        <label for="usage-date" class="block text-xs font-semibold text-slate-300 mb-1">Date *</label>
+                        <input id="usage-date" type="date" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-amber-500" />
+                    </div>
+                </div>
+                <div>
+                    <label for="usage-tech" class="block text-xs font-semibold text-slate-300 mb-1">Technician / Department</label>
+                    <input id="usage-tech" type="text" placeholder="e.g. Alex (Optics Lab)" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
+                </div>
+                <div>
+                    <label for="usage-notes" class="block text-xs font-semibold text-slate-300 mb-1">Repair Notes / Work Order #</label>
+                    <textarea id="usage-notes" rows="2" placeholder="e.g. Replaced optical motor during camera calibration #492" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+                <div class="pt-4 border-t border-slate-800 flex items-center justify-end space-x-3">
+                    <button type="button" id="btn-cancel-usage-modal" class="px-4 py-2.5 bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl">Record Usage</button>
+                </div>
+            </form>
         </div>
-
-        <form id="usage-form" class="p-6 space-y-4">
-          <div>
-            <label for="usage-select-item" class="block text-xs font-semibold text-slate-300 mb-1">Select Spare Part *</label>
-            <select id="usage-select-item" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-amber-500">
-              <!-- Populated dynamically -->
-            </select>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label for="usage-qty" class="block text-xs font-semibold text-slate-300 mb-1">Qty Used *</label>
-              <input id="usage-qty" type="number" min="1" value="1" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 font-mono focus:outline-none focus:border-amber-500" />
-            </div>
-
-            <div>
-              <label for="usage-date" class="block text-xs font-semibold text-slate-300 mb-1">Date *</label>
-              <input id="usage-date" type="date" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-amber-500" />
-            </div>
-          </div>
-
-          <div>
-            <label for="usage-tech" class="block text-xs font-semibold text-slate-300 mb-1">Technician / Department</label>
-            <input id="usage-tech" type="text" placeholder="e.g. Alex (Optics Lab)" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500" />
-          </div>
-
-          <div>
-            <label for="usage-notes" class="block text-xs font-semibold text-slate-300 mb-1">Repair Notes / Work Order #</label>
-            <textarea id="usage-notes" rows="2" placeholder="e.g. Replaced optical motor during camera calibration #492" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
-          </div>
-
-          <div class="pt-4 border-t border-slate-800 flex items-center justify-end space-x-3">
-            <button type="button" id="btn-cancel-usage-modal" class="px-4 py-2.5 bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl">Cancel</button>
-            <button type="submit" class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl">Record Usage</button>
-          </div>
-        </form>
-
-      </div>
     </div>
 
+    <div id="printable-area" class="hidden"></div>
 
-    <!-- ========================================== -->
-    <!-- 4. ISOLATED PRINTABLE AREA FOR MEDIA PRINT -->
-    <!-- ========================================== -->
-    <div id="printable-area" class="hidden">
-      <!-- Injected dynamically before calling window.print() -->
-    </div>
-
-
-    <!-- Load Main Application Logic Script -->
+    <!-- Script handling initialization check for skip flag -->
+    <script>
+        if (sessionStorage.getItem('skip-anim') === 'true') {
+            document.addEventListener('DOMContentLoaded', () => {
+                const overlay = document.getElementById('intro-overlay');
+                if (overlay) overlay.style.display = 'none';
+            });
+        }
+    </script>
     <script type="module" src="/src/app.js"></script>
-
-  </body>
+</body>
 </html>
