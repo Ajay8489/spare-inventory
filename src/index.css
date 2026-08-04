@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Custom scrollbar for inventory table */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(249, 115, 22, 0.4);
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(249, 115, 22, 0.7);
+  }
+}
+
+/* SVG Teardown Keyframe Animations */
+@keyframes floatParticle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.4; }
+  50% { transform: translateY(-10px) rotate(5deg); opacity: 0.9; }
+}
+
+@keyframes scanLine {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(320px); opacity: 0; }
+}
+
+@keyframes laserPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.animate-scan {
+  animation: scanLine 2.5s ease-in-out infinite;
+}
+
+.animate-laser {
+  animation: laserPulse 1.5s ease-in-out infinite;
+}
+
+/* Print Stylesheet - Media Print Query */
+@media print {
+  /* Hide all non-essential web application UI */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Show only the dedicated printable container */
+  #printable-area, #printable-area * {
+    visibility: visible !important;
+  }
+
+  #printable-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  /* Styling for printable barcode labels */
+  .print-label-box {
+    border: 2px solid #000 !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    max-width: 400px !important;
+    margin: 20px auto !important;
+    text-align: center !important;
+    page-break-inside: avoid !important;
+    background: #fff !important;
+  }
+
+  /* Styling for printable inventory report table */
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 15px !important;
+  }
+
+  .print-table th, .print-table td {
+    border: 1px solid #333 !important;
+    padding: 8px 12px !important;
+    font-size: 10pt !important;
+    text-align: left !important;
+    color: #000 !important;
+  }
+
+  .print-table th {
+    background-color: #f1f5f9 !important;
+    font-weight: bold !important;
+  }
+}
