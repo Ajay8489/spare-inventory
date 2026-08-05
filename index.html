@@ -1,50 +1,89 @@
-<!-- Firebase SDK (Modular Version) -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spare Inventory - Login</title>
+    <!-- Add your CSS styling here or link your stylesheet -->
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
+        .login-container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; margin-bottom: 0.5rem; }
+        .input-group input { width: 100%; padding: 0.5rem; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 0.75rem; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:disabled { background-color: #cccccc; }
+        .hidden { display: none; }
+        #errorMessage { color: red; margin-bottom: 1rem; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
 
-    // Your Firebase project credentials
-    const firebaseConfig = {
-        apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
-        authDomain: "experiment-51058.firebaseapp.com",
-        projectId: "experiment-51058",
-        storageBucket: "experiment-51058.firebasestorage.app",
-        messagingSenderId: "523094266784",
-        appId: "1:523094266784:web:e370716bfbd4a27555cac5",
-        measurementId: "G-SHLW7HC5E4"
-    };
+    <div class="login-container">
+        <h2>Spare Inventory Login</h2>
+        
+        <!-- Error Message Container -->
+        <div id="errorMessage" class="hidden"></div>
 
-    // Initialize Firebase Auth
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const userInput = document.getElementById('username').value.trim(); // Can be an email
-        const passInput = document.getElementById('password').value;
-        const errorMsg = document.getElementById('errorMessage');
-        const loginBtn = document.getElementById('loginBtn');
-
-        errorMsg.classList.add('hidden');
-        loginBtn.disabled = true;
-        loginBtn.textContent = 'Connecting...';
-
-        try {
-            // Authenticate securely via Firebase Auth backend
-            const userCredential = await signInWithEmailAndPassword(auth, userInput, passInput);
+        <!-- Login Form -->
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">Email / Username</label>
+                <input type="email" id="username" required placeholder="Enter your email">
+            </div>
             
-            // Successfully logged in
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('currentUser', userCredential.user.email);
-            window.location.href = 'dashboard.html';
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="Enter your password">
+            </div>
 
-        } catch (error) {
-            console.error("Login Error:", error);
-            errorMsg.textContent = "Invalid username or password.";
-            errorMsg.classList.remove('hidden');
-        } finally {
-            loginBtn.disabled = false;
-            loginBtn.textContent = 'Login';
-        }
-    });
-</script>
+            <button type="submit" id="loginBtn">Login</button>
+        </form>
+    </div>
+
+    <!-- Firebase Authentication Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
+            authDomain: "experiment-51058.firebaseapp.com",
+            projectId: "experiment-51058",
+            storageBucket: "experiment-51058.firebasestorage.app",
+            messagingSenderId: "523094266784",
+            appId: "1:523094266784:web:e370716bfbd4a27555cac5",
+            measurementId: "G-SHLW7HC5E4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('username').value.trim();
+            const passInput = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
+            const loginBtn = document.getElementById('loginBtn');
+
+            errorMsg.classList.add('hidden');
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Connecting...';
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, userInput, passInput);
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('currentUser', userCredential.user.email);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error("Login Error:", error);
+                errorMsg.textContent = "Invalid username or password.";
+                errorMsg.classList.remove('hidden');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        });
+    </script>
+</body>
+</html>
