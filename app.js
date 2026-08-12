@@ -4,7 +4,7 @@ import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot
 
 // --- FIREBASE CONFIGURATION ---
 const firebaseConfig = {
-    apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
+ apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
     authDomain: "experiment-51058.firebaseapp.com",
     projectId: "experiment-51058",
     storageBucket: "experiment-51058.firebasestorage.app",
@@ -30,7 +30,7 @@ const editIdInput = document.getElementById('editId');
 const saveBtn = document.getElementById('saveBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 const logoutBtn = document.getElementById('logoutBtn');
-const printDbBtn = document.getElementById('printDbBtn');
+const printAllLabelsBtn = document.getElementById('printAllLabelsBtn'); 
 const inventoryTableBody = document.getElementById('inventoryTableBody');
 const totalUniqueEl = document.getElementById('totalUnique');
 const totalQtyEl = document.getElementById('totalQty');
@@ -44,7 +44,7 @@ const checkUsageBtn = document.getElementById('checkUsageBtn');
 const usageResults = document.getElementById('usageResults');
 const usageList = document.getElementById('usageList');
 
-// --- CACHED INVENTORY DATA FOR USAGE FILTERING ---
+// --- CACHED INVENTORY DATA ---
 let currentInventoryData = [];
 
 // --- AUTHENTICATION & INITIALIZATION ---
@@ -101,10 +101,9 @@ function initInventoryListener() {
             const rawName = data.name || "";
             const rawBarcode = data.barcode || "";
             const qty = Number(data.quantity) || 0;
-            // Safely handle records that don't have the 'used' field yet
             const used = (data.used !== undefined && data.used !== null) ? Number(data.used) : 0;
-            
-            // Push into local cache for date range filtering
+
+            // Push into local cache for date range filtering & printing all labels
             currentInventoryData.push({
                 id,
                 name: rawName,
@@ -118,7 +117,6 @@ function initInventoryListener() {
 
             const row = document.createElement('tr');
             row.className = "hover:bg-gray-50 transition-colors";
-            
             row.innerHTML = `
                 <td class="p-4 font-medium text-gray-800">${escapeHtml(rawName)}</td>
                 <td class="p-4 font-mono text-gray-600">${escapeHtml(rawBarcode)}</td>
@@ -164,26 +162,21 @@ if (checkUsageBtn) {
     checkUsageBtn.addEventListener('click', () => {
         const startVal = startDateInput ? startDateInput.value : '';
         const endVal = endDateInput ? endDateInput.value : '';
-
         if (!startVal || !endVal) {
             alert("Please select both a start and end date.");
             return;
         }
-
         const startDate = new Date(startVal);
         startDate.setHours(0, 0, 0, 0);
-
         const endDate = new Date(endVal);
         endDate.setHours(23, 59, 59, 999);
 
         const filteredSpares = currentInventoryData.filter(item => {
             if (item.used <= 0) return false;
-            
             let itemDate = new Date();
             if (item.updatedAt) {
                 itemDate = typeof item.updatedAt.toDate === 'function' ? item.updatedAt.toDate() : new Date(item.updatedAt);
             }
-
             return itemDate >= startDate && itemDate <= endDate;
         });
 
@@ -193,9 +186,7 @@ if (checkUsageBtn) {
 
 function displayUsageResults(spares) {
     if (!usageList || !usageResults) return;
-
     usageList.innerHTML = '';
-
     if (spares.length === 0) {
         usageList.innerHTML = '<li class="py-2 text-gray-500 text-center">No spares used in this timeframe.</li>';
     } else {
@@ -204,12 +195,11 @@ function displayUsageResults(spares) {
             li.className = "py-2 flex justify-between items-center";
             li.innerHTML = `
                 <span class="font-medium text-gray-700">${escapeHtml(spare.name)}</span>
-                <span class="text-orange-600 font-bold">-${spare.used} used</span>
+                <span class="text-orange-600 font-bold">- ${spare.used} used</span>
             `;
             usageList.appendChild(li);
         });
     }
-
     usageResults.classList.remove('hidden');
 }
 
@@ -296,9 +286,123 @@ if (spareForm) {
     });
 }
 
-if (printDbBtn) {
-    printDbBtn.addEventListener('click', () => {
-        window.print();
+// --- PRINT ALL LABELS HANDLER (ISOLATED IFRAME METHOD) ---
+if (printAllLabelsBtn) {
+    printAllLabelsBtn.addEventListener('click', () => {
+        if (!currentInventoryData || currentInventoryData.length === 0) {
+            alert("No items in the database to print labels for.");
+            return;
+        }
+
+        // 1. Create a hidden iframe so the print layout is completely isolated
+        const printFrame = document.createElement('iframe');
+        printFrame.style.position = 'absolute';
+        printFrame.style.width = '0px';
+        printFrame.style.height = '0px';
+        printFrame.style.border = 'none';
+        document.body.appendChild(printFrame);
+
+        const docFrame = printFrame.contentWindow.document;
+        docFrame.open();
+        
+        // 2. Setup the HTML structure and CSS strictly for the printed page
+        docFrame.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Print Labels</title>
+                <style>
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        margin: 0; 
+                        padding: 20px; 
+                        background: white;
+                    }
+                    .grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                        gap: 20px;
+                        justify-content: center;
+                    }
+                    .label-card {
+                        border: 2px dashed #666;
+                        padding: 15px;
+                        text-align: center;
+                        page-break-inside: avoid; /* Prevent slicing label in half over two pages */
+                        background: #fff;
+                        border-radius: 8px;
+                    }
+                    .label-title {
+                        font-size: 16px;
+                        font-weight: bold;
+                        margin-bottom: 15px;
+                        color: #000;
+                        word-wrap: break-word;
+                    }
+                    .barcode-img {
+                        max-width: 100%;
+                        height: auto;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="grid" id="labelGrid"></div>
+            </body>
+            </html>
+        `);
+        docFrame.close();
+
+        const labelGrid = docFrame.getElementById('labelGrid');
+        const tempCanvas = document.createElement('canvas'); // Temp canvas to force image generation
+
+        // 3. Render each barcode into an actual Image Data URL
+        currentInventoryData.forEach(item => {
+            const card = docFrame.createElement('div');
+            card.className = 'label-card';
+
+            const title = docFrame.createElement('div');
+            title.className = 'label-title';
+            title.innerText = item.name || "Unknown Item";
+
+            const img = docFrame.createElement('img');
+            img.className = 'barcode-img';
+
+            const codeValue = (item.barcode && item.barcode.trim() !== "") ? item.barcode : "NO-SKU";
+            
+            try {
+                // Draw barcode to the canvas
+                JsBarcode(tempCanvas, codeValue, {
+                    format: "CODE128",
+                    width: 2,
+                    height: 50,
+                    displayValue: true,
+                    lineColor: "#000000",
+                    margin: 0
+                });
+                // Convert the canvas to a real PNG image string so it CANNOT fail to print
+                img.src = tempCanvas.toDataURL("image/png");
+            } catch (e) {
+                console.error("Failed to generate barcode for:", codeValue, e);
+                img.alt = "Invalid Barcode";
+            }
+
+            card.appendChild(title);
+            card.appendChild(img);
+            labelGrid.appendChild(card);
+        });
+
+        // 4. Wait briefly for images to lock in, then trigger the print dialog
+        setTimeout(() => {
+            printFrame.contentWindow.focus();
+            printFrame.contentWindow.print();
+            
+            // Clean up the iframe after the print menu closes
+            setTimeout(() => {
+                if (document.body.contains(printFrame)) {
+                    document.body.removeChild(printFrame);
+                }
+            }, 1000);
+        }, 250);
     });
 }
 
@@ -310,7 +414,6 @@ window.editSpare = function(id, name, quantity, barcode, used = 0) {
     if (spareUsedInput) spareUsedInput.value = used;
     if (spareBarcodeInput) spareBarcodeInput.value = barcode;
     generateBarcodeSVG(barcode);
-
     if (formTitle) formTitle.textContent = "Edit Spare";
     if (saveBtn) {
         saveBtn.textContent = "Update Spare";
@@ -368,7 +471,6 @@ document.addEventListener("keydown", (e) => {
     if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
         return;
     }
-
     if (e.key === "Enter") {
         if (barcodeBuffer.length > 3) {
             processScannedBarcode(barcodeBuffer);
@@ -376,7 +478,6 @@ document.addEventListener("keydown", (e) => {
         barcodeBuffer = "";
         return;
     }
-
     if (e.key.length === 1) {
         barcodeBuffer += e.key;
         clearTimeout(barcodeTimer);
@@ -390,14 +491,11 @@ async function processScannedBarcode(scannedCode) {
     try {
         const q = query(collection(db, "spare"), where("barcode", "==", scannedCode));
         const querySnapshot = await getDocs(q);
-
         if (!querySnapshot.empty) {
             const docSnap = querySnapshot.docs[0];
             const data = docSnap.data();
-
             let currentQty = Number(data.quantity) || 0;
             let currentUsed = (data.used !== undefined && data.used !== null) ? Number(data.used) : 0;
-
             let newQty = currentQty > 0 ? currentQty - 1 : 0;
             let newUsed = currentUsed + 1;
 
@@ -406,7 +504,6 @@ async function processScannedBarcode(scannedCode) {
                 used: newUsed,
                 updatedAt: new Date()
             });
-
             console.log(`Scanned! ${data.name} updated. Qty: ${newQty}, Used: ${newUsed}`);
         } else {
             console.log("Barcode not found in database.");
