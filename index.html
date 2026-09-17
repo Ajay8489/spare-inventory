@@ -18,25 +18,20 @@
     </style>
 </head>
 <body>
-
     <div class="login-container">
         <h2>Spare Inventory Login</h2>
-        
         <!-- Error Message Container -->
         <div id="errorMessage" class="hidden"></div>
-
         <!-- Login Form -->
         <form id="loginForm">
             <div class="input-group">
                 <label for="username">Email / Username</label>
                 <input type="email" id="username" required placeholder="Enter your email">
             </div>
-            
             <div class="input-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" required placeholder="Enter your password">
             </div>
-
             <button type="submit" id="loginBtn">Login</button>
         </form>
     </div>
@@ -47,13 +42,13 @@
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBB9ItIgTVpq9KyoyNpCzs-A4kxZ0e55bk",
-            authDomain: "experiment-51058.firebaseapp.com",
-            projectId: "experiment-51058",
-            storageBucket: "experiment-51058.firebasestorage.app",
-            messagingSenderId: "523094266784",
-            appId: "1:523094266784:web:e370716bfbd4a27555cac5",
-            measurementId: "G-SHLW7HC5E4"
+            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+            appId: import.meta.env.VITE_FIREBASE_APP_ID,
+            measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
         };
 
         const app = initializeApp(firebaseConfig);
@@ -65,7 +60,7 @@
             const passInput = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMessage');
             const loginBtn = document.getElementById('loginBtn');
-
+            
             errorMsg.classList.add('hidden');
             loginBtn.disabled = true;
             loginBtn.textContent = 'Connecting...';
